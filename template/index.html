@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ r.name }} – {{ r.title }}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Young+Serif&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script>
+    // Apply saved theme before paint to avoid a flash.
+    try { const t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+  </script>
+</head>
+<body>
+  <div class="layout">
+    <aside class="side">
+      <header>
+        <h1>{{ r.name }}</h1>
+        <p class="role">{{ r.title }}</p>
+        <p class="muted">{{ r.location }}</p>
+      </header>
+
+      <nav aria-label="Sections" class="nav">
+        <a href="#summary">Summary</a>
+        <a href="#experience">Experience</a>
+        <a href="#projects">Projects</a>
+        <a href="#education">Education</a>
+      </nav>
+
+      <section aria-labelledby="filter-h" class="filter">
+        <h2 id="filter-h">Filter by skill</h2>
+        <div class="chips" role="group" aria-label="Skills">
+          {% for s in skills %}
+          <button class="chip" type="button" aria-pressed="false" data-skill="{{ s }}">{{ s }}</button>
+          {% endfor %}
+        </div>
+        <button class="link" type="button" id="clear" hidden>Clear filter</button>
+      </section>
+
+      <ul class="contact">
+        {% for c in r.contact %}
+        <li><span class="muted">{{ c.label }}</span> <a href="{{ c.href }}">{{ c.value }}</a></li>
+        {% endfor %}
+      </ul>
+
+      <div class="actions">
+        <button type="button" id="theme">Switch theme</button>
+        <button type="button" id="print">Print or save PDF</button>
+      </div>
+    </aside>
+
+    <main>
+      <section id="summary">
+        <p class="lead">{{ r.summary }}</p>
+      </section>
+
+      <section id="experience">
+        <h2>Experience</h2>
+        <ol class="timeline">
+          {% for e in r.experience %}
+          <li class="entry" data-skills="{{ e.skills | join(',') }}">
+            <div class="period">{{ e.period }}</div>
+            <div>
+              <h3>{{ e.role }}, {{ e.org }}</h3>
+              <ul>{% for p in e.points %}<li>{{ p }}</li>{% endfor %}</ul>
+              <p class="tags">{{ e.skills | join(', ') }}</p>
+            </div>
+          </li>
+          {% endfor %}
+        </ol>
+      </section>
+
+      <section id="projects">
+        <h2>Projects</h2>
+        <div class="projects">
+          {% for p in r.projects %}
+          <article class="entry project" data-skills="{{ p.skills | join(',') }}">
+            <h3>{{ p.name }}</h3>
+            <p>{{ p.blurb }}</p>
+            <p class="tags">{{ p.skills | join(', ') }}</p>
+          </article>
+          {% endfor %}
+        </div>
+      </section>
+
+      <section id="education">
+        <h2>Education</h2>
+        <ol class="timeline">
+          {% for d in r.education %}
+          <li class="entry">
+            <div class="period">{{ d.period }}</div>
+            <div><h3>{{ d.title }}</h3><p class="muted">{{ d.org }}</p></div>
+          </li>
+          {% endfor %}
+        </ol>
+      </section>
+    </main>
+  </div>
+  <p class="empty" id="empty" hidden>No experience or projects use all of the selected skills.</p>
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
