@@ -1,0 +1,10 @@
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+
+# Local credentials - never commit
+.env
+
+# Throwaway local MySQL instances
+.localmysql/
